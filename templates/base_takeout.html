@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title|escape }}{% endblock %}
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="{% url sitios.views.takeout %}">{% trans "Exporta tus datos" %}</a>{% endblock %}
+
+{% block cuerpo %}
+<h3>{% trans "Exporta tus datos" %}</h3>
+
+<p class="info">{% blocktrans %}Si tienes algún problema con la exportación puedes escribirnos un correo electrónico a <a href="mailto:correo@andaluciapeople.com">correo@andaluciapeople.com</a> y te echaremos una mano.{% endblocktrans %}</p>
+
+<p>Tus Estadísticas: 
+{{ number_fotos }} fotos, 
+{{ number_comentarios }} comentarios, 
+{{ number_sitios_enviados}} sitios enviados y 
+{{ number_sitios_favoritos }} sitios favoritos.</p>
+
+<p>Selecciona lo que quieres exportar:</p>
+<form method="post" action="">{% csrf_token %}
+    <dl>
+    {% for field in form %}
+    <dt>{{ field.label_tag }}</dt>
+    <dd>{{ field }}</dd>
+    {% if field.help_text %}<div class="help_text">{{ field.help_text }}</div>{% endif %}
+    {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+    {% endfor %}
+    </dl>
+    <input type="submit" value="{% trans "Enviar" %}" />
+</form>
+{% endblock %}

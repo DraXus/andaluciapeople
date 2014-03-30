@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
+<body> 
+<!-- Text area to display tracing information to the Web page. If you use Firebug or Safari debug console, these tracings will go to the JavaScript console as well. -->
+<textarea style="width: 1000px; height: 300px;" id="_traceTextBox"> </textarea>
+
+<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"> </script>
+
+<script type="text/javascript">
+//<![CDATA[
+var api_key = '5eb1af553ca152f3300473aecde14487';
+var channel_path = 'fb_connect/xd_receiver.htm';
+FB_RequireFeatures(["Api"], function(){
+	// Create an ApiClient object, passing app's API key and
+	// a site relative URL to xd_receiver.htm
+	FB.Facebook.init(api_key, channel_path);
+	
+	var api = FB.Facebook.apiClient;
+	
+	// require user to login
+	api.requireLogin(function(exception){
+		Debug.dump("Current user id is " + api.get_session().uid);
+	
+		// Get friends list
+		api.friends_get(null, function(result){
+			Debug.dump(result, 'friendsResult from non-batch execution ');
+		});
+	});
+});
+//]]>
+</script>
+
+<fb:login-button></fb:login-button>
+</body>
+</html>

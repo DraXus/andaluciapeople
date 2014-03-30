@@ -1,0 +1,1135 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title|escape }}{% endblock %}
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="{% url sitios.views.hoteles ciudad %}">{% trans "hoteles" %}</a>{% endblock %}
+
+{% block header %}
+<style type="text/css">
+.formulario{
+	float: left;
+}
+.sol{
+	border-collapse: collapse;
+	font-size: 12px;
+}
+.sol .tablacabecera{
+	font-weight: bold;
+}
+.litado{
+	float: left;
+}
+</style>
+<link rel="stylesheet" href="/media/css/ui-lightness/jquery-ui-1.8.7.custom.css" type="text/css" />
+  <style type="text/css">
+/*<![CDATA[*/
+	div.c6 {padding:10px;}
+	a.c5 {clear:both;}
+	img.c4 {width:150px;height:19px;float:left;margin-right:128px;}
+	tr.c3 {display: none;}
+	select.c2 {display: none;}
+	select.c1 {width:140px}
+	  
+	#searchbox{width:300px;border:10px solid #FBC300;background:#fff;font-family:Arial;font-size:12px;}
+	#searchbox span{font-size:12px;}
+	.BEhomeSearch {
+		background: none repeat scroll 0 0 #0982BF;
+		border: 3px solid #BCE8FE;
+		border-radius: 10px 10px 10px 10px;
+		color: white;
+		cursor: pointer;
+		float: right;
+		font-size: 16px;
+		font-weight: bold;
+		height: 40px;
+		margin: 0;
+		padding: 3px 5px;
+		text-decoration: none;
+		width: 85px;
+		top:-31px;
+		right:12px;
+		position:relative;
+	}
+	.ui-datepicker{font-size:12px;}
+	#logos a{font-size:12px;color:#0D94D3;}
+	#logos img{border:0 none;}
+  /*]]>*/
+  </style>
+  <script type="text/javascript">
+  function setCityInformation(city, nothing, country ){
+      var textBoxCity = document.getElementById('suggest1');
+      textBoxCity.value = city + " - " + country;
+  }
+
+  function vacio(q) {
+          for ( i = 0; i < q.length; i++ ) {
+                  if ( q.charAt(i) != " " ) {
+                          return true
+                  }
+          }
+          return false
+  }    
+    
+  function valida(F) {
+        if( vacio(F.Choice.value) == false ) {
+                alert("Por favor, introduzca una ciudad de destino.");
+                return false;
+        }
+        if( vacio(F.Calendar.value) == false ) {
+                alert("Por favor, introduzca la fecha de llegada.");
+                return false;
+        }
+        
+  }    
+  </script>
+{% endblock %}
+
+{% block jquery_ready %}
+$.datepicker.regional['es'] = {
+      closeText: 'Cerrar',
+      prevText: 'Ant',
+      nextText: 'Sig',
+      currentText: 'Hoy',
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+      dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+      dayNamesShort: ['Dom','Lun','Mar','Mie','Juv','Vie','Sab'],
+      dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
+      weekHeader: 'Sm',
+      dateFormat: 'dd/mm/yy',
+      firstDay: 1,
+      isRTL: false,
+      showMonthAfterYear: false,
+      yearSuffix: ''};
+	$.datepicker.setDefaults( $.datepicker.regional[ "es" ] );
+	$( "#datepicker" ).datepicker({ minDate: 0, numberOfMonths: 1,
+		showButtonPanel: true
+	});
+{% endblock %}
+
+{% block cuerpo %}
+{% ifequal LANGUAGE_CODE 'en' %}
+
+  {% ifequal id_province 0 %}
+	<script language="javascript" src="http://www.hb-247.com/aff/js1.cfm?affiliate=andaluciapeople&c=45&l=460x130&s=df"></script>
+  {% else %}
+	<script language="javascript" src="http://www.hb-247.com/aff/js1.cfm?affiliate=andaluciapeople&d={{ id_province }}&l=460x130&s=df"></script>
+  {% endifequal %}
+
+{% else %}
+  <div id="searchbox">
+    <form name="theForm" action="http://www.quehostales.com/buscar.php" method="get"
+    onsubmit="return valida(this);" id="BE_SP_FormMain">
+      <table cellpadding="3" cellspacing="0" id="BE_SP_MainHolder">
+        <tr>
+          <td class="BE_SP_ClearLine"><!----></td>
+        </tr>
+
+        <tr>
+          <td class="BEindexTabBack">
+            <table cellpadding='3' cellspacing='0' border='0' align='center' id=
+            'BE_SP_FormFieldsHolder'>
+              <tr>
+                <td class='BEmediumBoldCol BE_SP_Error' colspan="2"></td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label BE_SP_LabelChooseCity'><span class=
+                'BEIndexmediumBold'>1. Ciudad:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataChooseCity'><input name="Choice" class=
+                'BEselect citySelect' type="text" id="suggest1" value=
+                ' {{ nombre_ciudad }} - España ' /></td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label BE_SP_ArrivalDate'><span class=
+                'BEIndexmediumBold'>2. Fecha de llegada :</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataArrivalDate'><input name="Calendar" type=
+                "text" id="datepicker" /></td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label BE_SP_NumNights'><span class=
+                'BEIndexmediumBold'>3. Noches:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataNumNights'><select id="nights" name=
+                "NumNights" class="">
+                  <option value="1" selected="selected">
+                    1
+                  </option>
+
+                  <option value="2">
+                    2
+                  </option>
+
+                  <option value="3">
+                    3
+                  </option>
+
+                  <option value="4">
+                    4
+                  </option>
+
+                  <option value="5">
+                    5
+                  </option>
+
+                  <option value="6">
+                    6
+                  </option>
+
+                  <option value="7">
+                    7
+                  </option>
+
+                  <option value="8">
+                    8
+                  </option>
+
+                  <option value="9">
+                    9
+                  </option>
+
+                  <option value="10">
+                    10
+                  </option>
+
+                  <option value="11">
+                    11
+                  </option>
+
+                  <option value="12">
+                    12
+                  </option>
+
+                  <option value="13">
+                    13
+                  </option>
+
+                  <option value="14">
+                    14
+                  </option>
+
+                  <option value="15">
+                    15
+                  </option>
+
+                  <option value="16">
+                    16
+                  </option>
+
+                  <option value="17">
+                    17
+                  </option>
+
+                  <option value="18">
+                    18
+                  </option>
+
+                  <option value="19">
+                    19
+                  </option>
+
+                  <option value="20">
+                    20
+                  </option>
+
+                  <option value="21">
+                    21
+                  </option>
+
+                  <option value="22">
+                    22
+                  </option>
+
+                  <option value="23">
+                    23
+                  </option>
+
+                  <option value="24">
+                    24
+                  </option>
+
+                  <option value="25">
+                    25
+                  </option>
+
+                  <option value="26">
+                    26
+                  </option>
+
+                  <option value="27">
+                    27
+                  </option>
+
+                  <option value="28">
+                    28
+                  </option>
+
+                  <option value="29">
+                    29
+                  </option>
+                </select></td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label BE_SP_Currency'><span class='BEIndexmediumBold'>4.
+                Moneda:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataCurrency'><select name="Currency" class=
+                "formbk c1">
+                  <option value="AUD">
+                    Australian Dollar
+                  </option>
+
+                  <option value="GBP">
+                    British Pound
+                  </option>
+
+                  <option value="CAD">
+                    Canadian Dollar
+                  </option>
+
+                  <option value="EUR">
+                    Euro
+                  </option>
+
+                  <option value="USD">
+                    US Dollar
+                  </option>
+
+                  <option value="">
+                    ----------
+                  </option>
+
+                  <option value="ALL">
+                    Albanian Lek
+                  </option>
+
+                  <option value="DZD">
+                    Algerian Dinar
+                  </option>
+
+                  <option value="ARS">
+                    Argentine Peso
+                  </option>
+
+                  <option value="AMD">
+                    Armenian Dram
+                  </option>
+
+                  <option value="AUD">
+                    Australian Dollar
+                  </option>
+
+                  <option value="AZN">
+                    Azerbaijan New Manat
+                  </option>
+
+                  <option value="BSD">
+                    Bahamian Dollar
+                  </option>
+
+                  <option value="BHD">
+                    Bahraini Dinar
+                  </option>
+
+                  <option value="BDT">
+                    Bangladeshi Taka
+                  </option>
+
+                  <option value="BZD">
+                    Belize Dollar
+                  </option>
+
+                  <option value="BOB">
+                    Bolivian Boliviano
+                  </option>
+
+                  <option value="BRL">
+                    Brazilian Real
+                  </option>
+
+                  <option value="GBP">
+                    British Pound
+                  </option>
+
+                  <option value="BND">
+                    Brunei Dollar
+                  </option>
+
+                  <option value="XOF">
+                    CFA Franc BCEAO
+                  </option>
+
+                  <option value="XAF">
+                    CFA Franc BEAC
+                  </option>
+
+                  <option value="XPF">
+                    CFP Franc
+                  </option>
+
+                  <option value="KHR">
+                    Cambodian Riel
+                  </option>
+
+                  <option value="CAD">
+                    Canadian Dollar
+                  </option>
+
+                  <option value="CLP">
+                    Chilean Peso
+                  </option>
+
+                  <option value="CNY">
+                    Chinese Yuan Renminbi
+                  </option>
+
+                  <option value="COP">
+                    Colombian Peso
+                  </option>
+
+                  <option value="KMF">
+                    Comoros Franc
+                  </option>
+
+                  <option value="CRC">
+                    Costa Rican Colon
+                  </option>
+
+                  <option value="HRK">
+                    Croatian Kuna
+                  </option>
+
+                  <option value="CZK">
+                    Czech Koruna
+                  </option>
+
+                  <option value="DKK">
+                    Danish Krone
+                  </option>
+
+                  <option value="DJF">
+                    Djibouti Franc
+                  </option>
+
+                  <option value="DOP">
+                    Dominican R. Peso
+                  </option>
+
+                  <option value="XCD">
+                    East Caribbean Dollar
+                  </option>
+
+                  <option value="EGP">
+                    Egyptian Pound
+                  </option>
+
+                  <option value="EEK">
+                    Estonian Kroon
+                  </option>
+
+                  <option value="EUR" selected="selected">
+                    Euro
+                  </option>
+
+                  <option value="FJD">
+                    Fiji Dollar
+                  </option>
+
+                  <option value="HNL">
+                    Honduran Lempira
+                  </option>
+
+                  <option value="HKD">
+                    Hong Kong Dollar
+                  </option>
+
+                  <option value="HUF">
+                    Hungarian Forint
+                  </option>
+
+                  <option value="ISK">
+                    Iceland Krona
+                  </option>
+
+                  <option value="INR">
+                    Indian Rupee
+                  </option>
+
+                  <option value="IDR">
+                    Indonesian Rupiah
+                  </option>
+
+                  <option value="ILS">
+                    Israeli New Shekel
+                  </option>
+
+                  <option value="JPY">
+                    Japanese Yen
+                  </option>
+
+                  <option value="JOD">
+                    Jordanian Dinar
+                  </option>
+
+                  <option value="KZT">
+                    Kazakhstan Tenge
+                  </option>
+
+                  <option value="KES">
+                    Kenyan Shilling
+                  </option>
+
+                  <option value="KWD">
+                    Kuwaiti Dinar
+                  </option>
+
+                  <option value="KGS">
+                    Kyrgyzstanian Som
+                  </option>
+
+                  <option value="LAK">
+                    Lao Kip
+                  </option>
+
+                  <option value="LVL">
+                    Latvian Lats
+                  </option>
+
+                  <option value="LBP">
+                    Lebanese Pound
+                  </option>
+
+                  <option value="LTL">
+                    Lithuanian Litas
+                  </option>
+
+                  <option value="MYR">
+                    Malaysian Ringgit
+                  </option>
+
+                  <option value="MRO">
+                    Mauritanian Ouguiya
+                  </option>
+
+                  <option value="MUR">
+                    Mauritius Rupee
+                  </option>
+
+                  <option value="MXN">
+                    Mexican Peso
+                  </option>
+
+                  <option value="MNT">
+                    Mongolian Tugrik
+                  </option>
+
+                  <option value="MAD">
+                    Moroccan Dirham
+                  </option>
+
+                  <option value="NAD">
+                    Namibia Dollar
+                  </option>
+
+                  <option value="NPR">
+                    Nepalese Rupee
+                  </option>
+
+                  <option value="NZD">
+                    New Zealand Dollar
+                  </option>
+
+                  <option value="NIO">
+                    Nicaraguan Cordoba Oro
+                  </option>
+
+                  <option value="NOK">
+                    Norwegian Kroner
+                  </option>
+
+                  <option value="OMR">
+                    Omani Rial
+                  </option>
+
+                  <option value="PKR">
+                    Pakistan Rupee
+                  </option>
+
+                  <option value="PGK">
+                    Papua New Guinea Kina
+                  </option>
+
+                  <option value="PYG">
+                    Paraguayan Guarani
+                  </option>
+
+                  <option value="PEN">
+                    Peruvian Nuevo Sol
+                  </option>
+
+                  <option value="PHP">
+                    Philippine Peso
+                  </option>
+
+                  <option value="PLN">
+                    Polish Zloty
+                  </option>
+
+                  <option value="QAR">
+                    Qatari Rial
+                  </option>
+
+                  <option value="RON">
+                    Romanian New Lei
+                  </option>
+
+                  <option value="RUB">
+                    Russian Rouble
+                  </option>
+
+                  <option value="RWF">
+                    Rwandan Franc
+                  </option>
+
+                  <option value="WST">
+                    Samoan Tala
+                  </option>
+
+                  <option value="SAR">
+                    Saudi Riyal
+                  </option>
+
+                  <option value="SGD">
+                    Singapore Dollar
+                  </option>
+
+                  <option value="SOS">
+                    Somali Shilling
+                  </option>
+
+                  <option value="ZAR">
+                    South African Rand
+                  </option>
+
+                  <option value="KRW">
+                    South-Korean Won
+                  </option>
+
+                  <option value="LKR">
+                    Sri Lanka Rupee
+                  </option>
+
+                  <option value="SZL">
+                    Swaziland Lilangeni
+                  </option>
+
+                  <option value="SEK">
+                    Swedish Krona
+                  </option>
+
+                  <option value="CHF">
+                    Swiss Franc
+                  </option>
+
+                  <option value="TWD">
+                    Taiwan Dollar
+                  </option>
+
+                  <option value="TZS">
+                    Tanzanian Shilling
+                  </option>
+
+                  <option value="THB">
+                    Thai Baht
+                  </option>
+
+                  <option value="TOP">
+                    Tonga Pa'anga
+                  </option>
+
+                  <option value="TTD">
+                    Trinidad/Tobago Dollar
+                  </option>
+
+                  <option value="TND">
+                    Tunisian Dinar
+                  </option>
+
+                  <option value="TRY">
+                    Turkish Lira
+                  </option>
+
+                  <option value="USD">
+                    US Dollar
+                  </option>
+
+                  <option value="UGX">
+                    Uganda Shilling
+                  </option>
+
+                  <option value="UAH">
+                    Ukraine Hryvnia
+                  </option>
+
+                  <option value="UYU">
+                    Uruguayan Peso
+                  </option>
+
+                  <option value="AED">
+                    Utd. Arab Emir. Dirham
+                  </option>
+
+                  <option value="VUV">
+                    Vanuatu Vatu
+                  </option>
+
+                  <option value="VEF">
+                    Venezuelan Bolivar
+                  </option>
+
+                  <option value="VND">
+                    Vietnamese Dong
+                  </option>
+                </select></td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label BE_SP_Persons'><span class='BEIndexmediumBold'>5.
+                Huéspedes:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataPersons'><select name='Persons' onchange=
+                'checkGroup(this)' id='PersonsSelect1'>
+                  <option value='1' selected='selected'>
+                    1
+                  </option>
+
+                  <option value='2'>
+                    2
+                  </option>
+
+                  <option value='3'>
+                    3
+                  </option>
+
+                  <option value='4'>
+                    4
+                  </option>
+
+                  <option value='5'>
+                    5
+                  </option>
+
+                  <option value='6'>
+                    6
+                  </option>
+
+                  <option value='7'>
+                    7
+                  </option>
+
+                  <option value='8'>
+                    8
+                  </option><!--<option value='GROUP'>9+
+                  </option>-->
+                </select> <select name='Persons' onchange='checkGroup(this)' id=
+                'PersonsSelect2' disabled="disabled" class="c2">
+                  <option value='NOGROUP'>
+                    &lt; 9
+                  </option>
+
+                  <option value='9'>
+                    9
+                  </option>
+
+                  <option value='10'>
+                    10
+                  </option>
+
+                  <option value='11'>
+                    11
+                  </option>
+
+                  <option value='12'>
+                    12
+                  </option>
+
+                  <option value='13'>
+                    13
+                  </option>
+
+                  <option value='14'>
+                    14
+                  </option>
+
+                  <option value='15'>
+                    15
+                  </option>
+
+                  <option value='16'>
+                    16
+                  </option>
+
+                  <option value='17'>
+                    17
+                  </option>
+
+                  <option value='18'>
+                    18
+                  </option>
+
+                  <option value='19'>
+                    19
+                  </option>
+
+                  <option value='20'>
+                    20
+                  </option>
+
+                  <option value='21'>
+                    21
+                  </option>
+
+                  <option value='22'>
+                    22
+                  </option>
+
+                  <option value='23'>
+                    23
+                  </option>
+
+                  <option value='24'>
+                    24
+                  </option>
+
+                  <option value='25'>
+                    25
+                  </option>
+
+                  <option value='26'>
+                    26
+                  </option>
+
+                  <option value='27'>
+                    27
+                  </option>
+
+                  <option value='28'>
+                    28
+                  </option>
+
+                  <option value='29'>
+                    29
+                  </option>
+
+                  <option value='30'>
+                    30
+                  </option>
+
+                  <option value='31'>
+                    31
+                  </option>
+
+                  <option value='32'>
+                    32
+                  </option>
+
+                  <option value='33'>
+                    33
+                  </option>
+
+                  <option value='34'>
+                    34
+                  </option>
+
+                  <option value='35'>
+                    35
+                  </option>
+
+                  <option value='36'>
+                    36
+                  </option>
+
+                  <option value='37'>
+                    37
+                  </option>
+
+                  <option value='38'>
+                    38
+                  </option>
+
+                  <option value='39'>
+                    39
+                  </option>
+
+                  <option value='40'>
+                    40
+                  </option>
+
+                  <option value='41'>
+                    41
+                  </option>
+
+                  <option value='42'>
+                    42
+                  </option>
+
+                  <option value='43'>
+                    43
+                  </option>
+
+                  <option value='44'>
+                    44
+                  </option>
+
+                  <option value='45'>
+                    45
+                  </option>
+
+                  <option value='46'>
+                    46
+                  </option>
+
+                  <option value='47'>
+                    47
+                  </option>
+
+                  <option value='48'>
+                    48
+                  </option>
+
+                  <option value='49'>
+                    49
+                  </option>
+
+                  <option value='50'>
+                    50
+                  </option>
+
+                  <option value='51'>
+                    51
+                  </option>
+
+                  <option value='52'>
+                    52
+                  </option>
+
+                  <option value='53'>
+                    53
+                  </option>
+
+                  <option value='54'>
+                    54
+                  </option>
+
+                  <option value='55'>
+                    55
+                  </option>
+
+                  <option value='56'>
+                    56
+                  </option>
+
+                  <option value='57'>
+                    57
+                  </option>
+
+                  <option value='58'>
+                    58
+                  </option>
+
+                  <option value='59'>
+                    59
+                  </option>
+
+                  <option value='60'>
+                    60
+                  </option>
+
+                  <option value='61'>
+                    61
+                  </option>
+
+                  <option value='62'>
+                    62
+                  </option>
+
+                  <option value='63'>
+                    63
+                  </option>
+
+                  <option value='64'>
+                    64
+                  </option>
+
+                  <option value='65'>
+                    65
+                  </option>
+
+                  <option value='66'>
+                    66
+                  </option>
+
+                  <option value='67'>
+                    67
+                  </option>
+
+                  <option value='68'>
+                    68
+                  </option>
+
+                  <option value='69'>
+                    69
+                  </option>
+
+                  <option value='70'>
+                    70
+                  </option>
+
+                  <option value='71'>
+                    71
+                  </option>
+
+                  <option value='72'>
+                    72
+                  </option>
+
+                  <option value='73'>
+                    73
+                  </option>
+
+                  <option value='74'>
+                    74
+                  </option>
+
+                  <option value='75'>
+                    75
+                  </option>
+
+                  <option value='76'>
+                    76
+                  </option>
+
+                  <option value='77'>
+                    77
+                  </option>
+
+                  <option value='78'>
+                    78
+                  </option>
+
+                  <option value='79'>
+                    79
+                  </option>
+
+                  <option value='80'>
+                    80
+                  </option>
+                </select></td>
+              </tr>
+
+              <tr id='BE_SP_GroupTypes' class="c3">
+                <td class='BE_SP_Label BE_SP_GroupTypes'><span class='BEIndexmedium'>7.
+                |</span> <span class='BEIndexmediumBold'>Tipo De Grupo:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataGroupTypes'><select name='GroupType'
+                class='formElementsSelect BE_GroupTypes'>
+                  <option value=''>
+                    Elige uno
+                  </option>
+
+                  <option value='Holiday with Friends'>
+                    Holiday with Friends
+                  </option>
+
+                  <option value='Junior / Primary School'>
+                    Junior / Primary School
+                  </option>
+
+                  <option value='High / Secondary School'>
+                    High / Secondary School
+                  </option>
+
+                  <option value='College / University'>
+                    College / University
+                  </option>
+
+                  <option value='Business Trip'>
+                    Business Trip
+                  </option>
+
+                  <option value='Stag/Hen/Bachelor Party'>
+                    Stag/Hen/Bachelor Party
+                  </option>
+
+                  <option value='Sports Group'>
+                    Sports Group
+                  </option>
+
+                  <option value='Cultural Group'>
+                    Cultural Group
+                  </option>
+                </select></td>
+              </tr>
+
+              <tr id='BE_SP_AgeRanges' class="c3">
+                <td class='BE_SP_Label BE_SP_GroupAges'><span class=
+                'BEIndexmedium'>8.</span> <span class='BEIndexmediumBold'>Intervalos De
+                Edad:</span></td>
+
+                <td class='BE_SP_Data BE_SP_DataGroupAges'>
+                  <ul class='BE_AgeRangesHolder'>
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges012"
+                    name="AgeRanges012" value="1" /> <label class=
+                    "hwraSearchPanelAgeGroup" for="AgeRanges012">0-12</label></li>
+
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges1218"
+                    name="AgeRanges1218" value="1" /> <label class=
+                    "hwraSearchPanelAgeGroup" for="AgeRanges1218">12-18</label></li>
+
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges1821"
+                    name="AgeRanges1821" value="1" /> <label class=
+                    "hwraSearchPanelAgeGroup" for="AgeRanges1821">18-21</label></li>
+
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges2135"
+                    name="AgeRanges2135" value="1" /> <label class=
+                    "hwraSearchPanelAgeGroup" for="AgeRanges2135">21-35</label></li>
+
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges3550"
+                    name="AgeRanges3550" value="1" /> <label class=
+                    "hwraSearchPanelAgeGroup" for="AgeRanges3550">35-50</label></li>
+
+                    <li class="BE_AgeRange"><input type="checkbox" id="AgeRanges50" name=
+                    "AgeRanges50" value="1" /> <label class="hwraSearchPanelAgeGroup"
+                    for="AgeRanges50">50+</label></li>
+                  </ul>
+                </td>
+              </tr>
+
+              <tr>
+                <td class='BE_SP_Label'>&nbsp;</td>
+
+                <td class='BE_SP_Data BE_SP_SubmitButtonHolder'></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table><input type="hidden" name="page" value="buscar" id="buscar" /> <input type=
+      "hidden" name="Submit" value="" id="Submit" />
+
+      <div id="logos" class="c6">
+        <a href="http://www.quehostales.com" title="Hostales Baratos"><img src=
+        "http://www.quehostales.com/images/logo.png" alt="queHostales.com" class=
+        "c4" /></a> <input type='submit' value='buscar' class='BEhomeSearch' name=
+        'SubmitButton' onclick='return CheckSearchPanel();' id="boton" /> <a href=
+        "http://www.quehostales.com/hostales/espana/{{ciudad}}/hostales-en-{{ciudad}}.html"
+        class="c5" target="_blank">Ver todos los hostales de {{ nombre_ciudad }}</a>
+      </div>
+    </form>
+  </div>
+{% endifequal %}
+{% endblock %}
